@@ -1,0 +1,5 @@
+<?php
+require 'config.php';
+if(user()){header('Location: dashboard.php');exit;}$error='';
+if($_SERVER['REQUEST_METHOD']==='POST'){verify_csrf();$email=trim($_POST['email']??'');$pass=$_POST['password']??'';$s=$pdo->prepare('SELECT * FROM users WHERE email=?');$s->execute([$email]);$u=$s->fetch();if($u&&password_verify($pass,$u['password'])){session_regenerate_id(true);$_SESSION['uid']=$u['id'];header('Location: dashboard.php');exit;}$error='البريد الإلكتروني أو كلمة المرور غير صحيحة.';}
+header_html('تسجيل الدخول');if($error)echo '<div class="alert error">'.e($error).'</div>';?><form method="post" class="card form"><label>البريد الإلكتروني<input type="email" name="email" required></label><label>كلمة المرور<input type="password" name="password" required></label><input type="hidden" name="csrf" value="<?=csrf()?>"><button>دخول</button><p>لا تملك حساباً؟ <a href="register.php">إنشاء حساب طالب</a></p></form><?php footer_html(); ?>
